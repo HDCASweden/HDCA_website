@@ -14,20 +14,20 @@
   <body>
     <table id="table_id" class="display">
       <thead>
-        <tr>
+        <!-- <tr>
           <th>Names</th>
           <th>Countries</th>
-        </tr>
+        </tr> -->
       </thead>
       <tbody>
-        <tr>
+        <!-- <tr>
           <td>Jane Doe</td>
           <td>Sweden</td>
         </tr>
         <tr>
           <td>Susan Smith</td>
           <td>Germany</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
     <script
@@ -43,7 +43,35 @@
     <script>
       console.log("running");
       $(document).ready(function () {
-        $("#table_id").DataTable();
+        $("#table_id").DataTable({
+          data: [
+            {
+              name: "Tiger Nixon",
+              position: "System Architect",
+              salary: "$3,120",
+              start_date: "2011/04/25",
+              office: "Edinburgh",
+              extn: 5421,
+            },
+            {
+              name: "Garrett Winters",
+              position: "Director",
+              salary: "5300",
+              start_date: "2011/07/25",
+              office: "Edinburgh",
+              extn: "8422",
+            },
+            // ...
+          ],
+          columns: [
+            { data: "name", title: "Name" },
+            { data: "position", title: "Position" },
+            { data: "office", title: "Location" },
+            { data: "extn", title: "Number" },
+            { data: "start_date", title: "Start date" },
+            { data: "salary", title: "Salary" },
+          ],
+        });
       });
     </script>
   </body>
