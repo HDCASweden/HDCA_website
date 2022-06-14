@@ -12,15 +12,39 @@
     <title>Document</title>
   </head>
   <body>
-    <script
-      type="text/javascript"
-      charset="utf8"
-      src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"
-    ></script>
+    <table id="table_id" class="display">
+      <thead>
+        <tr>
+          <th>Names</th>
+          <th>Countries</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jane Doe</td>
+          <td>Sweden</td>
+        </tr>
+        <tr>
+          <td>Susan Smith</td>
+          <td>Germany</td>
+        </tr>
+      </tbody>
+    </table>
     <script
       src="https://code.jquery.com/jquery-3.6.0.js"
       integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
       crossorigin="anonymous"
     ></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"
+    ></script>
+    <script>
+      console.log("running");
+      $(document).ready(function () {
+        $("#table_id").DataTable();
+      });
+    </script>
   </body>
 </html>
