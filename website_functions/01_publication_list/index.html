@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css"
+    />
+    <title>Document</title>
+  </head>
+  <body onload="getTableData()">
+    <table id="table_id" class="display">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.js"
+      integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.3.0/d3.min.js"></script>
+    <script>
+      // This function is called on load of the html body (see above)
+      const getTableData = async () => {
+        // Waiting to fetch csv data and extract it into an array of objects.
+        // Every object in the array represents one line in the csv file.
+        const tableData = await d3.csv(
+          "https://raw.githubusercontent.com/HDCASweden/HDCA_database/main/compiled/publications/paper_news.csv",
+          (data) => {
+            return data;
+          }
+        );
+        // The resulting array/object also contains a key-value-pair with an array of all columns from the csv file.
+        // We want to create a new array with that information in the format needed to render the table,
+        // that is, an object with the properties "data" and "title" for each column.
+        // The link-column needs to be modified with a callback function to render the data as <a> tags.
+        // See documentation on this here: https://datatables.net/reference/option/columns.createdCell
+        let tableColumns = [];
+        tableData.columns.forEach((column) => {
+          if (column === "link") {
+            tableColumns.push({
+              data: column,
+              createdCell: (cellId, cellData, rowData, rowIndex, colIndex) => {
+                $(cellId).html(`<a href=${rowData.link}>${rowData.link}</a>`);
+              },
+              title: column,
+            });
+          } else {
+            tableColumns.push({ data: column, title: column });
+          }
+        });
+        // Select the table initiated in the html code above and insert the data from the csv file
+        $(document).ready(function () {
+          $("#table_id").DataTable({
+            scrollX: true, // enable horizontal scrolling
+            data: tableData,
+            columns: tableColumns,
+          });
+        });
+        return;
+      };
+    </script>
+  </body>
+</html>
