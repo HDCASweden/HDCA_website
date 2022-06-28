@@ -33,7 +33,7 @@
         // Waiting to fetch csv data and extract it into an array of objects.
         // Every object in the array represents one line in the csv file.
         const tableData = await d3.csv(
-          "https://export.uppmax.uu.se/snic2022-23-113/datasets/Blum2021/Blum2021_metadata.csv",
+          "https://raw.githubusercontent.com/HDCASweden/HDCA_database/main/compiled/publications/paper_news.csv",
           (data) => {
             return data;
           }
