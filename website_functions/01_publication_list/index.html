@@ -40,10 +40,24 @@
         );
         // The resulting array/object also contains a key-value-pair with an array of all columns from the csv file.
         // We want to create a new array with that information in the format needed to render the table,
-        // that is, an object with the properties "data" and "title" for each column
+        // that is, an object with the properties "data" and "title" for each column.
+        // The link-column needs to be modified with a callback function to render the data as <a> tags.
+        // See documentation on this here: https://datatables.net/reference/option/columns.createdCell
         let tableColumns = [];
         tableData.columns.forEach((column) => {
-          tableColumns.push({ data: column, title: column });
+          if (column === "link") {
+            tableColumns.push({
+              data: column,
+              createdCell: (cellId, cellData, rowData, rowIndex, colIndex) => {
+                $(cellId).html(
+                  "<a href=" + rowData.link + ">" + rowData.link + "</a>"
+                );
+              },
+              title: column,
+            });
+          } else {
+            tableColumns.push({ data: column, title: column });
+          }
         });
         // Select the table initiated in the html code above and insert the data from the csv file
         $(document).ready(function () {
