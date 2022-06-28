@@ -49,9 +49,7 @@
             tableColumns.push({
               data: column,
               createdCell: (cellId, cellData, rowData, rowIndex, colIndex) => {
-                $(cellId).html(
-                  "<a href=" + rowData.link + ">" + rowData.link + "</a>"
-                );
+                $(cellId).html(`<a href=${rowData.link}>${rowData.link}</a>`);
               },
               title: column,
             });
