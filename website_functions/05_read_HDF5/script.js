@@ -34,7 +34,11 @@ const p = f.get("matrix/indptr").value;
 // check the dimensions of the matrix.
 // will return an array with 2 values: [number_of_rows, number_of_columns]
 const shape = f.get("matrix/shape").value;
-console.log("x", x);
-console.log("i", i);
-console.log("p", p);
-console.log(shape);
+
+// Initialize an empty matrix with the dimensions of the one from the hdf5 file
+const matrix = math.identity(shape[0], shape[1], "sparse");
+
+// replace the CCS notation arrays with the ones found in the hdf5 file
+matrix._index = i;
+matrix._ptr = p;
+matrix._values = x;
