@@ -35,6 +35,32 @@ const mp = f.get("matrix/indptr").value;
 // will return an array with 2 values: [number_of_rows, number_of_columns]
 const shape = f.get("matrix/shape").value;
 
+// Add header to html
+document.getElementById(
+  "matrixHeader"
+).innerHTML = `<h2>Matrix Name</h2><p>${shape[0]} rows x ${shape[1]} columns`;
+
+// Create array with names of first and last five rows
+const allNames = f.get("matrix/features/name").value;
+const names = [
+  ...allNames.slice(0, 5),
+  ...allNames.slice(allNames.length - 5, allNames.length),
+];
+
+// Add names to html
+const left = document.getElementById("left");
+names.map((name, index) => {
+  if (index == 4) {
+    left.innerHTML += `<p>${name}</p>
+    <div class="transparent"></div>
+    <div class="transparent"></div>
+    <div class="transparent"></div>
+    `;
+  } else {
+    left.innerHTML += `<p>${name}</p>`;
+  }
+});
+
 // Initialize an empty matrix with the dimensions of the one from the hdf5 file
 const matrix = math.identity(shape[0], shape[1], "sparse");
 
@@ -133,9 +159,13 @@ first5Columns.forEach((column, index) => {
   const matrixDiv = document.getElementById(`column${index}`);
   column.map((value, index) => {
     if (index == 4) {
-      matrixDiv.innerHTML += `<p>${value}</p><div class="separator horizontal"></div>`;
+      matrixDiv.innerHTML += `<p>${value == 0 ? "." : value}</p>
+      <div class="separator horizontal-left"></div>
+      <div class="separator horizontal-left"></div>
+      <div class="separator horizontal-left"></div>
+      `;
     } else {
-      matrixDiv.innerHTML += `<p>${value}</p>`;
+      matrixDiv.innerHTML += `<p>${value == 0 ? "." : value}</p>`;
     }
   });
 });
@@ -150,9 +180,13 @@ last5Columns.forEach((column, index) => {
   const matrixDiv = document.getElementById(`column${index + 5}`);
   column.map((value, index) => {
     if (index == 4) {
-      matrixDiv.innerHTML += `<p>${value}</p><div class="separator horizontal"></div>`;
+      matrixDiv.innerHTML += `<p>${value == 0 ? "." : value}</p>
+      <div class="separator horizontal-right"></div>
+      <div class="separator horizontal-right"></div>
+      <div class="separator horizontal-right"></div>
+      `;
     } else {
-      matrixDiv.innerHTML += `<p>${value}</p>`;
+      matrixDiv.innerHTML += `<p>${value == 0 ? "." : value}</p>`;
     }
   });
 });

@@ -9,21 +9,27 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <section style="display: flex">
-      <div style="display: flex">
-        <div id="column0" class="column"></div>
-        <div id="column1" class="column"></div>
-        <div id="column2" class="column"></div>
-        <div id="column3" class="column"></div>
-        <div id="column4" class="column"></div>
-      </div>
-      <div class="separator vertical"></div>
-      <div style="display: flex">
-        <div id="column5" class="column"></div>
-        <div id="column6" class="column"></div>
-        <div id="column7" class="column"></div>
-        <div id="column8" class="column"></div>
-        <div id="column9" class="column"></div>
+    <section class="matrix">
+      <div id="matrixHeader" class="header"></div>
+      <div class="content">
+        <div id="left" class="left"></div>
+        <div style="display: flex">
+          <div id="column0" class="column"></div>
+          <div id="column1" class="column"></div>
+          <div id="column2" class="column"></div>
+          <div id="column3" class="column"></div>
+          <div id="column4" class="column"></div>
+        </div>
+        <div class="separator vertical"></div>
+        <div class="separator vertical"></div>
+        <div class="separator vertical"></div>
+        <div style="display: flex">
+          <div id="column5" class="column"></div>
+          <div id="column6" class="column"></div>
+          <div id="column7" class="column"></div>
+          <div id="column8" class="column"></div>
+          <div id="column9" class="column"></div>
+        </div>
       </div>
     </section>
     <script src="./script.js" type="module"></script>
