@@ -133,7 +133,7 @@ first5Columns.forEach((column, index) => {
   const matrixDiv = document.getElementById(`column${index}`);
   column.map((value, index) => {
     if (index == 4) {
-      matrixDiv.innerHTML += `<p>${value}</p><div style="border: 2px solid black"></div>`;
+      matrixDiv.innerHTML += `<p>${value}</p><div class="separator horizontal"></div>`;
     } else {
       matrixDiv.innerHTML += `<p>${value}</p>`;
     }
@@ -150,7 +150,7 @@ last5Columns.forEach((column, index) => {
   const matrixDiv = document.getElementById(`column${index + 5}`);
   column.map((value, index) => {
     if (index == 4) {
-      matrixDiv.innerHTML += `<p>${value}</p><div style="border: 2px solid black"></div>`;
+      matrixDiv.innerHTML += `<p>${value}</p><div class="separator horizontal"></div>`;
     } else {
       matrixDiv.innerHTML += `<p>${value}</p>`;
     }
