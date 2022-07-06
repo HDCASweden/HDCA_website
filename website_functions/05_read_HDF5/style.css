@@ -1,0 +1,17 @@
+.column {
+  min-width: 30px;
+  padding: 0 5px;
+  text-align: center;
+}
+.separator {
+  border: 2px solid black;
+}
+
+.horizontal {
+  margin: 0 -15px;
+}
+
+.vertical {
+  height: 400px;
+  margin: 0 10px;
+}
