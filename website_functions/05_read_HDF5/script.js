@@ -7,7 +7,7 @@ const Module = await h5wasm.ready;
 const { FS } = Module;
 
 // read the hdf5 file as ArrayBuffer
-const res = await fetch("./test_dataset_20rows_30columns.h5");
+const res = await fetch("https://export.uppmax.uu.se/snic2022-23-113/datasets/Blum2021/Blum2021_GSM4911289_counts.h5");
 const arrayBuffer = await res.arrayBuffer();
 
 // write the content to a file as a UInt8Array
