@@ -43,7 +43,7 @@ matrix._index = mi;
 matrix._ptr = mp;
 matrix._values = mx;
 
-// Create empty visualisation arrays
+// Create empty visualization arrays
 const first5Columns = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -60,51 +60,64 @@ const last5Columns = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
 
-const populateFirstColumns = (colIndex) => {
-  console.log("populating column ", colIndex);
-  // Check number of values in column
-  const values = mp[colIndex + 1] - mp[colIndex];
-  // If it's more than 10, check first and last five indices
+// This function goes through one column of a sparse matrix.
+// It's based on the values mi, mp, mx and shape calculated above.
+// It populates a nested array that is used to visualize the first five rows and columns of the matrix.
+// To do that, it:
+// - identifies the part of the index array mi that is relevant for the current column
+// - identifies which of those indices are relevant for the visualization,
+// - accesses the values in mx that belong to those indices
+// - inserts them into the nested array that represents the visualization.
+// colInd: the index of the column in the sparse matrix we are looking at
+// vis: the nested visualization array that needs to be populated.
+//      Consists of five arrays (columns) with ten values (rows) each.
+
+const populateVisualization = (colInd, vis) => {
+  // Which array in vis are we updating?
+  // If we look at the first five columns, it's the same as colInd
+  let visInd = colInd;
+  // If we look at the last five columns, we need to calculate an offset
+  if (colInd > 4) {
+    visInd = colInd - shape[1] + 5;
+  }
+  // Use pointer array to check number of non zero values in current column
+  const values = mp[colInd + 1] - mp[colInd];
+  // If it's more than 10, we don't need all of them for the 10x10 visualization.
+  // Check only first and last five indices
   if (values > 10) {
-    for (let i = mp[colIndex]; i < mp[colIndex] + 5; i++) {
-      // get index from indexarray
+    // i runs over first five indices in the part of the index array that represents the current column
+    for (let i = mp[colInd]; i < mp[colInd] + 5; i++) {
+      // get index from index array
       const ind = mi[i];
-      console.log(ind);
+      // Check if the index should be part of the visualization
       if (ind < 5) {
         // get matching value from value array
         const val = mx[i];
-        first5Columns[colIndex].splice(ind, 1, val);
+        vis[visInd].splice(ind, 1, val);
       }
     }
+    // i runs over last five indices in the part of the index array that represents the current column
     for (let i = mp[1] - 5; i < mp[1]; i++) {
       // get index from indexarray
       const ind = mi[i];
-      console.log(ind);
+      // Check if the index should be part of the visualization
       if (ind > 14) {
         // get matching value from value array
         const val = mx[i];
-        first5Columns[colIndex].splice(
-          first5Columns[colIndex].length - (shape[0] - ind),
-          1,
-          val
-        );
+        vis[visInd].splice(vis[visInd].length - (shape[0] - ind), 1, val);
       }
     }
   }
-  // If it's less than 10, check all until start of next column
+  // If it's less than 10, check all values indices present for the current column in the index array
   else {
-    for (let i = mp[colIndex]; i < mp[colIndex + 1]; i++) {
+    for (let i = mp[colInd]; i < mp[colInd + 1]; i++) {
       // get index from indexarray
       const ind = mi[i];
-      console.log(ind);
+      // Check if the index should be part of the visualization
       if (ind < 5 || ind > 14) {
         // get matching value from value array
         const val = mx[i];
-        first5Columns[colIndex].splice(
-          first5Columns[colIndex].length - (shape[0] - ind),
-          1,
-          val
-        );
+        vis[visInd].splice(vis[visInd].length - (shape[0] - ind), 1, val);
       }
     }
   }
@@ -112,7 +125,7 @@ const populateFirstColumns = (colIndex) => {
 
 // populate first 5 columns
 for (let i = 0; i < 5; i++) {
-  populateFirstColumns(i);
+  populateVisualization(i, first5Columns);
 }
 
 first5Columns.forEach((column) => console.log(column));
@@ -127,62 +140,9 @@ first5Columns.forEach((column, index) => {
   });
 });
 
-// colIndex: Index of the column in the original matrix
-const populateLastColumns = (colIndex, colTotal) => {
-  console.log("populating column ", colIndex);
-  // Which array in last5Columns are we updating?
-  const visIndex = colIndex - colTotal + 5;
-  // Check number of values in column
-  const values = mp[colIndex + 1] - mp[colIndex];
-  // If it's more than 10, check first and last five indices
-  if (values > 10) {
-    for (let i = mp[colIndex]; i < mp[colIndex] + 5; i++) {
-      // get index from indexarray
-      const ind = mi[i];
-      console.log(ind);
-      if (ind < 5) {
-        // get matching value from value array
-        const val = mx[i];
-        last5Columns[visIndex].splice(ind, 1, val);
-      }
-    }
-    for (let i = mp[1] - 5; i < mp[1]; i++) {
-      // get index from indexarray
-      const ind = mi[i];
-      console.log(ind);
-      if (ind > 14) {
-        // get matching value from value array
-        const val = mx[i];
-        last5Columns[visIndex].splice(
-          last5Columns[visIndex].length - (shape[0] - ind),
-          1,
-          val
-        );
-      }
-    }
-  }
-  // If it's less than 10, check all until start of next column
-  else {
-    for (let i = mp[colIndex]; i < mp[colIndex + 1]; i++) {
-      // get index from indexarray
-      const ind = mi[i];
-      console.log(ind);
-      if (ind < 5 || ind > 14) {
-        // get matching value from value array
-        const val = mx[i];
-        last5Columns[visIndex].splice(
-          last5Columns[visIndex].length - (shape[0] - ind),
-          1,
-          val
-        );
-      }
-    }
-  }
-};
-
 // populate last 5 columns
 for (let i = shape[1] - 5; i < shape[1]; i++) {
-  populateLastColumns(i, shape[1]);
+  populateVisualization(i, last5Columns);
 }
 
 last5Columns.forEach((column) => console.log(column));
