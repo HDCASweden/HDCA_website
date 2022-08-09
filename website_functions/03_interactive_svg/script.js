@@ -30,6 +30,16 @@ const loadData = async () => {
   // will return an array with 2 values: [number_of_rows, number_of_columns]
   const shape = f.get("matrix/shape").value;
   console.log(shape);
+
+  Papa.parse(
+    "https://export.uppmax.uu.se/snic2022-23-113/hdca_webdev/CCF/CCF_meta.csv",
+    {
+      download: true,
+      complete: (results) => {
+        console.log(results);
+      },
+    }
+  );
 };
 
 window.onload = loadData();
