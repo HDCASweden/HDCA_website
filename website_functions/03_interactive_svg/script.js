@@ -1,3 +1,4 @@
+let metadata = [];
 const loadData = async () => {
   // read the hdf5 file as ArrayBuffer
   const res = await fetch(
@@ -37,9 +38,38 @@ const loadData = async () => {
       download: true,
       complete: (results) => {
         console.log(results);
+        createOptions(results.data[0]);
+        metadata = results.data;
       },
     }
   );
+};
+
+const createOptions = (columnNames) => {
+  columnNames.map((name) => {
+    document.getElementById("dropdown").innerHTML += `<option>${name}</option>`;
+  });
+};
+
+const addColor = (columnName) => {
+  const colIndex = metadata[0].indexOf(columnName);
+  metadata.map((areaArray, index) => {
+    if (index == 0) {
+      return;
+    }
+    const area = document.getElementById(areaArray[0]);
+    if (!area || areaArray[0][0] == "_") {
+      return;
+    }
+    const value = areaArray[colIndex];
+    if (value == "NA") {
+      area.setAttribute("fill", "#F2F2F2");
+    } else if (value == "TRUE") {
+      area.setAttribute("fill", "#8856a7");
+    } else if (value == "FALSE") {
+      area.setAttribute("fill", "#9ebcda");
+    }
+  });
 };
 
 window.onload = loadData();
