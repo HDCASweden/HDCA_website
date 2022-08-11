@@ -72,4 +72,19 @@ const addColor = (columnName) => {
   });
 };
 
+// Function to get a color for a value that's part of a sample.
+// The color is picked from a sequential scale with 101 colors.
+// The min value of the sample will have the lightest color.
+// The max value will have the darkest color.
+// The color for the current value is picked from the colorscale accordingly.
+// value: number
+// sample: number[]
+const getSequentialColor = (value, sampleArray) => {
+  const normalizedValue =
+    (value - Math.min(...sampleArray)) /
+    (Math.max(...sampleArray) - Math.min(...sampleArray));
+  const color = COLORS[Math.round(normalizedValue * 100)];
+  return color;
+};
+
 window.onload = loadData();
