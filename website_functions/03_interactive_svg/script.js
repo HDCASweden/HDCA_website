@@ -119,6 +119,7 @@ const generateLegend = (columnName) => {
 const addColor = (columnName) => {
   generateLegend(columnName);
   const colIndex = metadata[0].indexOf(columnName);
+  
   metadata.map((areaArray, index) => {
     if (index == 0) {
       return;
@@ -132,6 +133,10 @@ const addColor = (columnName) => {
     }
 
     const value = areaArray[colIndex];
+    //color numeric values with color scale
+    if (!isNaN(value) ){
+      area.setAttribute("fill", getSequentialColor(value, getSampleArray(metadata)));
+    }
     if (value == "NA") {
       area.setAttribute("fill", COLORS.na);
     } else if (value == "TRUE") {
@@ -144,6 +149,20 @@ const addColor = (columnName) => {
       area.setAttribute("fill", COLORS.right);
     }
   });
+
+};
+
+// Function to get a array of only numeric values.
+// The data is the metadata provided in the project
+// data: any[]
+const getSampleArray = (data) => {
+  let sampleArray = [];
+  for(var i = 1; i < metadata.length -1; i++){
+    if(!isNaN(metadata[i][7])){
+      sampleArray.push(metadata[i][7]);
+    }
+  }
+  return sampleArray;
 };
 
 // Function to get a color for a value that's part of a sample.
