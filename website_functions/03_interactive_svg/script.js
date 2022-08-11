@@ -61,6 +61,11 @@ const addColor = (columnName) => {
     if (!area || areaArray[0][0] == "_") {
       return;
     }
+
+    if (columnName === "name") {
+      area.setAttribute("fill", `${DISCRETE_COLORS[index - 1]}`);
+    }
+
     const value = areaArray[colIndex];
     if (value == "NA") {
       area.setAttribute("fill", "#F2F2F2");
@@ -70,7 +75,7 @@ const addColor = (columnName) => {
       area.setAttribute("fill", "#9ebcda");
     } else if (value == "left") {
       area.setAttribute("fill", "#8c96c6");
-    }else if (value == "right") {
+    } else if (value == "right") {
       area.setAttribute("fill", "#810f7c");
     }
   });
@@ -87,7 +92,7 @@ const getSequentialColor = (value, sampleArray) => {
   const normalizedValue =
     (value - Math.min(...sampleArray)) /
     (Math.max(...sampleArray) - Math.min(...sampleArray));
-  const color = COLORS[Math.round(normalizedValue * 100)];
+  const color = SEQUENTIAL_COLORS[Math.round(normalizedValue * 100)];
   return color;
 };
 

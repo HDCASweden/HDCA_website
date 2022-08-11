@@ -1,4 +1,4 @@
-const COLORS = [
+const SEQUENTIAL_COLORS = [
   "#e5e5e5",
   "#e5e3e1",
   "#e4e2de",
@@ -100,4 +100,21 @@ const COLORS = [
   "#0f0303",
   "#080101",
   "#000000",
+];
+
+// Palette with 11 discrete colors that should be colorblind safe.
+// Source: http://mkweb.bcgsc.ca/colorblind/palettes.mhtml
+// (It's the 12-Color palette with one color abandoned, "dodger blue")
+const DISCRETE_COLORS = [
+  "#9F0162",
+  "#009F81",
+  "#FF5AAF",
+  "#00FCCF",
+  "#8400CD",
+  "#00C2F9",
+  "#FFB2FD",
+  "#A40122",
+  "#E20134",
+  "#FF6E3A",
+  "#FFC33B",
 ];
