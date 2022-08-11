@@ -68,6 +68,10 @@ const addColor = (columnName) => {
       area.setAttribute("fill", "#8856a7");
     } else if (value == "FALSE") {
       area.setAttribute("fill", "#9ebcda");
+    } else if (value == "left") {
+      area.setAttribute("fill", "#8c96c6");
+    }else if (value == "right") {
+      area.setAttribute("fill", "#810f7c");
     }
   });
 };
