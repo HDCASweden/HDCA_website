@@ -2,8 +2,31 @@
   box-sizing: border-box;
 }
 
+.legend-wrapper {
+  display: flex;
+  width: fit-content;
+}
+
 .legend-field {
   width: 1rem;
   height: 1rem;
   border: 1px solid black;
+}
+
+.seq-legend-colors {
+  width: 1rem;
+  margin-right: 0.2rem;
+  background: linear-gradient(#e2e2e2, #cd8500, #b22222, #000000);
+}
+
+.seq-legend-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 5rem;
+}
+
+.seq-legend-labels p {
+  margin: 0;
+  line-height: 1rem;
 }

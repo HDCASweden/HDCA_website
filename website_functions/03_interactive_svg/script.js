@@ -54,6 +54,8 @@ const createOptions = (columnNames) => {
 // Function to generate the right legend for the visualization
 // depending on what column is selected for visualisation
 const generateLegend = (legendRows) => {
+  const legendWrapper = document.getElementById("legendWrapper");
+  legendWrapper.innerHTML = `<table id="legend"></table>`;
   const legend = document.getElementById("legend");
   legend.innerHTML = "";
   Object.keys(legendRows).forEach((row) => {
@@ -64,6 +66,20 @@ const generateLegend = (legendRows) => {
       </tr>
     `;
   });
+};
+
+// Function to generate a legend for sequential coloring
+// based on the min and max value of the scale
+const generateSeqLegend = (min, max) => {
+  const legend = document.getElementById("legendWrapper");
+  legend.innerHTML = `
+    <div class="seq-legend-colors"></div>
+    <div class="seq-legend-labels">
+      <p>${min}</p>
+      <p>${(min + max) / 2}</p>
+      <p>${max}</p>
+    </div>
+  `;
 };
 
 const addColor = (columnName) => {
@@ -89,14 +105,23 @@ const addColor = (columnName) => {
     }
 
     const value = areaArray[colIndex];
-    if (!Object.keys(legend).includes(value)) {
+    if (
+      value !== "NA" &&
+      isNaN(value) &&
+      !Object.keys(legend).includes(value)
+    ) {
       legend[value] = COLORS[value];
     }
-    //color numeric values with color scale
+
+    //color numeric values with color scale and generate matching legend
     if (!isNaN(value)) {
       area.setAttribute(
         "fill",
         getSequentialColor(value, getSampleArray(metadata))
+      );
+      generateSeqLegend(
+        Math.min(...getSampleArray(metadata)),
+        Math.max(...getSampleArray(metadata))
       );
     }
     if (value == "NA") {
@@ -111,7 +136,9 @@ const addColor = (columnName) => {
       area.setAttribute("fill", COLORS.right);
     }
   });
-  generateLegend(legend);
+  if (Object.keys(legend).length > 0) {
+    generateLegend(legend);
+  }
 };
 
 // Function to get a array of only numeric values
