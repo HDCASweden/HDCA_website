@@ -118,3 +118,11 @@ const DISCRETE_COLORS = [
   "#FF6E3A",
   "#FFC33B",
 ];
+
+const COLORS = {
+  true: "#8856a7",
+  false: "#9ebcda",
+  na: "#F2F2F2",
+  right: "#810f7c",
+  left: "#8c96c6",
+};

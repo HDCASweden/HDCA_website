@@ -51,7 +51,73 @@ const createOptions = (columnNames) => {
   });
 };
 
+// Function to generate the right legend for the visualization
+// depending on what column is selected for visualisation
+const generateLegend = (columnName) => {
+  const legend = document.getElementById("legend");
+  // Delete old legend
+  legend.innerHTML = "";
+  switch (columnName) {
+    case "name":
+      metadata.forEach((areaArray, index) => {
+        // Some arrays in metadata metadata don't contain relevant data, skip those.
+        if (
+          index === 0 ||
+          index === metadata.length - 1 ||
+          areaArray[0][0] == "_"
+        ) {
+          return;
+        }
+        legend.innerHTML += `
+        <tr>
+        <td class="legend-field" style="background-color: ${
+          // because we skip the first row in metadata,
+          // we need the -1 to match the legend colors to the right regions
+          DISCRETE_COLORS[index - 1]
+        }"></td>
+        <td>${areaArray[1]}</td>
+        </tr>
+        `;
+      });
+      break;
+    case "side":
+      legend.innerHTML = `
+        <tr>
+        <td class="legend-field" style="background-color: ${COLORS.right}"></td>
+        <td>Right</td>
+        </tr>
+        <tr>
+          <td class="legend-field" style="background-color: ${COLORS.left}"></td>
+          <td>Left</td>
+        </tr>
+        <tr>
+          <td class="legend-field" style="background-color: ${COLORS.na}"></td>
+          <td>NA</td>
+        </tr>
+        `;
+      break;
+    case "inflammation_level":
+    /** */
+    default:
+      legend.innerHTML = `
+        <tr>
+        <td class="legend-field" style="background-color: ${COLORS.true}"></td>
+        <td>True</td>
+        </tr>
+        <tr>
+          <td class="legend-field" style="background-color: ${COLORS.false}"></td>
+          <td>False</td>
+        </tr>
+        <tr>
+          <td class="legend-field" style="background-color: ${COLORS.na}"></td>
+          <td>NA</td>
+        </tr>
+        `;
+  }
+};
+
 const addColor = (columnName) => {
+  generateLegend(columnName);
   const colIndex = metadata[0].indexOf(columnName);
   metadata.map((areaArray, index) => {
     if (index == 0) {
@@ -61,22 +127,21 @@ const addColor = (columnName) => {
     if (!area || areaArray[0][0] == "_") {
       return;
     }
-
     if (columnName === "name") {
       area.setAttribute("fill", `${DISCRETE_COLORS[index - 1]}`);
     }
 
     const value = areaArray[colIndex];
     if (value == "NA") {
-      area.setAttribute("fill", "#F2F2F2");
+      area.setAttribute("fill", COLORS.na);
     } else if (value == "TRUE") {
-      area.setAttribute("fill", "#8856a7");
+      area.setAttribute("fill", COLORS.true);
     } else if (value == "FALSE") {
-      area.setAttribute("fill", "#9ebcda");
+      area.setAttribute("fill", COLORS.false);
     } else if (value == "left") {
-      area.setAttribute("fill", "#8c96c6");
+      area.setAttribute("fill", COLORS.left);
     } else if (value == "right") {
-      area.setAttribute("fill", "#810f7c");
+      area.setAttribute("fill", COLORS.right);
     }
   });
 };
