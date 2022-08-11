@@ -111,6 +111,21 @@ const addColor = (columnName) => {
       area.setAttribute("fill", COLORS.right);
     }
   });
+  generateLegend(legend);
+};
+
+// Function to get a array of only numeric values
+// The data is the metadata provided in the project
+// The function applies to inflammation_level column values
+// data: any[]
+const getSampleArray = (data) => {
+  let sampleArray = [];
+  for (var i = 1; i < metadata.length - 1; i++) {
+    if (!isNaN(metadata[i][metadata[i].length - 1])) {
+      sampleArray.push(metadata[i][metadata[i].length - 1]);
+    }
+  }
+  return sampleArray;
 };
 
 // Function to get a color for a value that's part of a sample.
