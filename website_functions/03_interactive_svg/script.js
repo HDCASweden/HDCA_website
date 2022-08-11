@@ -53,73 +53,26 @@ const createOptions = (columnNames) => {
 
 // Function to generate the right legend for the visualization
 // depending on what column is selected for visualisation
-const generateLegend = (columnName) => {
+const generateLegend = (legendRows) => {
   const legend = document.getElementById("legend");
-  // Delete old legend
   legend.innerHTML = "";
-  switch (columnName) {
-    case "name":
-      metadata.forEach((areaArray, index) => {
-        // Some arrays in metadata metadata don't contain relevant data, skip those.
-        if (
-          index === 0 ||
-          index === metadata.length - 1 ||
-          areaArray[0][0] == "_"
-        ) {
-          return;
-        }
-        legend.innerHTML += `
-        <tr>
-        <td class="legend-field" style="background-color: ${
-          // because we skip the first row in metadata,
-          // we need the -1 to match the legend colors to the right regions
-          DISCRETE_COLORS[index - 1]
-        }"></td>
-        <td>${areaArray[1]}</td>
-        </tr>
-        `;
-      });
-      break;
-    case "side":
-      legend.innerHTML = `
-        <tr>
-        <td class="legend-field" style="background-color: ${COLORS.right}"></td>
-        <td>Right</td>
-        </tr>
-        <tr>
-          <td class="legend-field" style="background-color: ${COLORS.left}"></td>
-          <td>Left</td>
-        </tr>
-        <tr>
-          <td class="legend-field" style="background-color: ${COLORS.na}"></td>
-          <td>NA</td>
-        </tr>
-        `;
-      break;
-    case "inflammation_level":
-    /** */
-    default:
-      legend.innerHTML = `
-        <tr>
-        <td class="legend-field" style="background-color: ${COLORS.true}"></td>
-        <td>True</td>
-        </tr>
-        <tr>
-          <td class="legend-field" style="background-color: ${COLORS.false}"></td>
-          <td>False</td>
-        </tr>
-        <tr>
-          <td class="legend-field" style="background-color: ${COLORS.na}"></td>
-          <td>NA</td>
-        </tr>
-        `;
-  }
+  Object.keys(legendRows).forEach((row) => {
+    legend.innerHTML += `
+      <tr>
+        <td class="legend-field" style="background-color: ${legendRows[row]}"></td>
+        <td>${row}</td>
+      </tr>
+    `;
+  });
 };
 
 const addColor = (columnName) => {
-  generateLegend(columnName);
+  // The legend object will be populated with key value pairs
+  // for each unique value we find in this column.
+  // The unique value from the column will become a key in the object and
+  // be combined with a color HEX code as its object value.
+  const legend = {};
   const colIndex = metadata[0].indexOf(columnName);
-  
   metadata.map((areaArray, index) => {
     if (index == 0) {
       return;
@@ -130,40 +83,34 @@ const addColor = (columnName) => {
     }
     if (columnName === "name") {
       area.setAttribute("fill", `${DISCRETE_COLORS[index - 1]}`);
+      if (!Object.keys(legend).includes(areaArray[1])) {
+        legend[areaArray[1]] = DISCRETE_COLORS[index - 1];
+      }
     }
 
     const value = areaArray[colIndex];
+    if (!Object.keys(legend).includes(value)) {
+      legend[value] = COLORS[value];
+    }
     //color numeric values with color scale
-    if (!isNaN(value) ){
-      area.setAttribute("fill", getSequentialColor(value, getSampleArray(metadata)));
+    if (!isNaN(value)) {
+      area.setAttribute(
+        "fill",
+        getSequentialColor(value, getSampleArray(metadata))
+      );
     }
     if (value == "NA") {
-      area.setAttribute("fill", COLORS.na);
+      area.setAttribute("fill", COLORS.NA);
     } else if (value == "TRUE") {
-      area.setAttribute("fill", COLORS.true);
+      area.setAttribute("fill", COLORS.TRUE);
     } else if (value == "FALSE") {
-      area.setAttribute("fill", COLORS.false);
+      area.setAttribute("fill", COLORS.FALSE);
     } else if (value == "left") {
       area.setAttribute("fill", COLORS.left);
     } else if (value == "right") {
       area.setAttribute("fill", COLORS.right);
     }
   });
-
-};
-
-// Function to get a array of only numeric values
-// The data is the metadata provided in the project
-// The function applies to inflammation_level column values
-// data: any[]
-const getSampleArray = (data) => {
-  let sampleArray = [];
-  for(var i = 1; i < metadata.length -1; i++){
-    if(!isNaN(metadata[i][metadata[i].length-1])){
-      sampleArray.push(metadata[i][metadata[i].length-1]);
-    }
-  }
-  return sampleArray;
 };
 
 // Function to get a color for a value that's part of a sample.

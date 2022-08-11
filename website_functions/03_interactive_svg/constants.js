@@ -120,9 +120,9 @@ const DISCRETE_COLORS = [
 ];
 
 const COLORS = {
-  true: "#8856a7",
-  false: "#9ebcda",
-  na: "#F2F2F2",
+  TRUE: "#8856a7",
+  FALSE: "#9ebcda",
+  NA: "#F2F2F2",
   right: "#810f7c",
   left: "#8c96c6",
 };
