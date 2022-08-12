@@ -103,25 +103,16 @@ const addColor = (columnName) => {
         legend[areaArray[1]] = DISCRETE_COLORS[index - 1];
       }
     }
-
     const value = areaArray[colIndex];
-    if (
-      value !== "NA" &&
-      isNaN(value) &&
-      !Object.keys(legend).includes(value)
-    ) {
+    if (isNaN(value) && !Object.keys(legend).includes(value)) {
       legend[value] = COLORS[value];
     }
 
-    //color numeric values with color scale and generate matching legend
+    //color numeric values with color scale
     if (!isNaN(value)) {
       area.setAttribute(
         "fill",
         getSequentialColor(value, getSampleArray(metadata))
-      );
-      generateSeqLegend(
-        Math.min(...getSampleArray(metadata)),
-        Math.max(...getSampleArray(metadata))
       );
     }
     if (value == "NA") {
@@ -136,7 +127,12 @@ const addColor = (columnName) => {
       area.setAttribute("fill", COLORS.right);
     }
   });
-  if (Object.keys(legend).length > 0) {
+  if (columnName === "inflammation_level") {
+    generateSeqLegend(
+      Math.min(...getSampleArray(metadata)),
+      Math.max(...getSampleArray(metadata))
+    );
+  } else {
     generateLegend(legend);
   }
 };
