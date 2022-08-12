@@ -16,6 +16,7 @@
 .seq-legend-colors {
   width: 1rem;
   margin-right: 0.2rem;
+  margin-top: 0.2rem;
   background: linear-gradient(#e2e2e2, #cd8500, #b22222, #000000);
 }
 
@@ -29,4 +30,22 @@
 .seq-legend-labels p {
   margin: 0;
   line-height: 1rem;
+}
+
+object {
+  height: 100vh;
+  width: 60vh; 
+ }
+
+ .row {
+  display: flex;
+}
+
+.left {
+  padding: 0.6rem;
+  width: 25%;
+}
+
+.right {
+  width: 75%;
 }
