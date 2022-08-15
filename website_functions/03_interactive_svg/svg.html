@@ -131,6 +131,11 @@
         </select>
         <label for="dropdown">Choose filter:</label>
         <select id="dropdown" onChange="addColor(event.target.value)"></select>
+        <form>
+          <label for="genesDropdown">Genes</label>
+          <input name="genesDropdown" id="genesDropdown" list="genes-list" />
+        </form>
+        <datalist id="genes-list"> </datalist>
       </div>
       <div class="right">
         <div id="legendWrapper" class="legend-wrapper"></div>
