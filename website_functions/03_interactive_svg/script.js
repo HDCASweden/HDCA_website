@@ -166,4 +166,15 @@ const getSequentialColor = (value, sampleArray) => {
   return color;
 };
 
+const getView = (boxId) => {
+  const box = document.getElementById(boxId);
+  const boxX = box.getAttribute("x");
+  const boxY = box.getAttribute("y");
+  const boxWidth = box.getAttribute("width");
+  const boxHeight = box.getAttribute("height");
+
+  const image = document.getElementById("heart");
+  image.setAttribute("viewBox", `${boxX} ${boxY} ${boxWidth} ${boxHeight}`);
+};
+
 window.onload = loadData();
