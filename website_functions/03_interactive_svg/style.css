@@ -34,10 +34,10 @@
 
 object {
   height: 100vh;
-  width: 60vh; 
- }
+  width: 33%;
+}
 
- .row {
+.row {
   display: flex;
 }
 
