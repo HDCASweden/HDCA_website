@@ -124,7 +124,15 @@
     />
   </svg>
   <select id="dropdown" onChange="addColor(event.target.value)"></select>
-    </div>
+  <form>
+    <label for="genesDropdown">Genes</label>
+    <input name="genesDropdown" id="genesDropdown" list="genes-list">
+  </form>
+  <datalist id="genes-list">
+  </datalist> 
+  </div>
+  
+  </div>
   <div class="right">
     <div id="legendWrapper" class="legend-wrapper"></div>
   </div>  

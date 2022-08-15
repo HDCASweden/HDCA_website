@@ -1,4 +1,19 @@
 let metadata = [];
+var list = document.getElementById('genes-list');
+var genesList = [
+  'gene_1',
+  'gene_2',
+  'gene_3',
+  'gene_4',
+  'gene_5',
+  'gene_6',
+];
+genesList.forEach(function(item){
+   var option = document.createElement('option');
+   option.value = item;
+   list.appendChild(option);
+});
+
 const loadData = async () => {
   // read the hdf5 file as ArrayBuffer
   const res = await fetch(
