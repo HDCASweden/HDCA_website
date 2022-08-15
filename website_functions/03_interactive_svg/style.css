@@ -41,11 +41,11 @@ object {
   display: flex;
 }
 
-.left {
+.right {
   padding: 0.6rem;
   width: 25%;
 }
 
-.right {
+.left {
   width: 75%;
 }
