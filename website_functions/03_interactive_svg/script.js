@@ -112,7 +112,7 @@ const showGenes = (gene) => {
 const visualize = (filter) => {
   // Check if we are showing genes or metadata
   const filterType = document.getElementById("selectType");
-  if (filterType === "metadata") {
+  if (filterType.value === "metadata") {
     showMetadata(filter);
   } else {
     showGenes(filter);
