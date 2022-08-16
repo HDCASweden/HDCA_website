@@ -1,4 +1,5 @@
 let metadata = [];
+let genesList = [];
 
 const createOptions = (optionArray) => {
   const list = document.getElementById("filter-list");
@@ -162,14 +163,6 @@ const switchType = (type) => {
   if (type === "metadata") {
     createOptions(metadata[0]);
   } else {
-    const genesList = [
-      "gene_1",
-      "gene_2",
-      "gene_3",
-      "gene_4",
-      "gene_5",
-      "gene_6",
-    ];
     createOptions(genesList);
   }
 };
@@ -201,6 +194,10 @@ const loadData = async () => {
   console.log("mx", mx);
   console.log("mi", mi);
   console.log("mp", mp);
+
+  // Get the row names of the matrix and use as genes list
+  const allGenes = f.get("matrix/features/name").value;
+  genesList = allGenes.map((str) => str.replace(/[^a-zA-Z0-9 _]/g, ""));
 
   // check the dimensions of the matrix.
   // will return an array with 2 values: [number_of_rows, number_of_columns]
