@@ -46,8 +46,10 @@ const loadData = async () => {
       download: true,
       complete: (results) => {
         console.log(results);
-        createOptions(results.data[0]);
         metadata = results.data;
+        // Check the current value of the filter type dropdown to create right set of options
+        const filterType = document.getElementById("selectType").value;
+        switchType(filterType);
       },
     }
   );
