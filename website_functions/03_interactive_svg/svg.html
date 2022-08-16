@@ -130,6 +130,11 @@
           <option value="_fov_heart">only heart</option>
           <option value="_fov_not_heart">only upper part</option>
         </select>
+        <label for="selectType">Choose filter type:</label>
+        <select id="selectType" onchange="switchType(event.target.value)">
+          <option value="metadata">Metadata</option>
+          <option value="genes">Genes</option>
+        </select>
         <label for="dropdown">Choose filter:</label>
         <select id="dropdown" onChange="addColor(event.target.value)"></select>
         <form>

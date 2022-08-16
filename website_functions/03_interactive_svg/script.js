@@ -54,6 +54,7 @@ const loadData = async () => {
 };
 
 const createOptions = (columnNames) => {
+  document.getElementById("dropdown").innerHTML = "";
   columnNames.map((name) => {
     document.getElementById("dropdown").innerHTML += `<option>${name}</option>`;
   });
@@ -183,6 +184,14 @@ const getView = (boxId) => {
 
   const image = document.getElementById("heart");
   image.setAttribute("viewBox", `${boxX} ${boxY} ${boxWidth} ${boxHeight}`);
+};
+
+const switchType = (type) => {
+  if (type === "metadata") {
+    createOptions(metadata[0]);
+  } else {
+    createOptions(["eins", "zwei", "drei"]);
+  }
 };
 
 window.onload = loadData();
