@@ -17,7 +17,7 @@
   width: 1rem;
   margin-right: 0.2rem;
   margin-top: 0.2rem;
-  background: linear-gradient(#e2e2e2, #cd8500, #b22222, #000000);
+  background: linear-gradient(#000000, #b22222, #cd8500, #e2e2e2);
 }
 
 .seq-legend-labels {

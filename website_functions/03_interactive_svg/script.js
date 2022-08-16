@@ -1,17 +1,10 @@
 let metadata = [];
-var list = document.getElementById('genes-list');
-var genesList = [
-  'gene_1',
-  'gene_2',
-  'gene_3',
-  'gene_4',
-  'gene_5',
-  'gene_6',
-];
-genesList.forEach(function(item){
-   var option = document.createElement('option');
-   option.value = item;
-   list.appendChild(option);
+var list = document.getElementById("genes-list");
+var genesList = ["gene_1", "gene_2", "gene_3", "gene_4", "gene_5", "gene_6"];
+genesList.forEach(function (item) {
+  var option = document.createElement("option");
+  option.value = item;
+  list.appendChild(option);
 });
 
 const loadData = async () => {
@@ -90,9 +83,9 @@ const generateSeqLegend = (min, max) => {
   legend.innerHTML = `
     <div class="seq-legend-colors"></div>
     <div class="seq-legend-labels">
-      <p>${min}</p>
-      <p>${(min + max) / 2}</p>
       <p>${max}</p>
+      <p>${(min + max) / 2}</p>
+      <p>${min}</p>
     </div>
   `;
 };
