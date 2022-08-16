@@ -125,23 +125,26 @@
           />
         </svg>
         <label for="fov">Choose view:</label>
-        <select name="fov" id="fov" onchange="getView(event.target.value)">
+        <select name="fov" id="fov" onChange="getView(event.target.value)">
           <option value="_fov">full image</option>
           <option value="_fov_heart">only heart</option>
           <option value="_fov_not_heart">only upper part</option>
         </select>
         <label for="selectType">Choose filter type:</label>
-        <select id="selectType" onchange="switchType(event.target.value)">
+        <select id="selectType" onChange="switchType(event.target.value)">
           <option value="metadata">Metadata</option>
           <option value="genes">Genes</option>
         </select>
-        <label for="dropdown">Choose filter:</label>
-        <select id="dropdown" onChange="addColor(event.target.value)"></select>
         <form>
-          <label for="genesDropdown">Genes</label>
-          <input name="genesDropdown" id="genesDropdown" list="genes-list" />
+          <label for="filterDropdown">Choose filter:</label>
+          <input
+            name="filterDropdown"
+            id="filterDropdown"
+            list="filter-list"
+            onchange="visualize(event.target.value)"
+          />
         </form>
-        <datalist id="genes-list"> </datalist>
+        <datalist id="filter-list"> </datalist>
       </div>
       <div class="right">
         <div id="legendWrapper" class="legend-wrapper"></div>
