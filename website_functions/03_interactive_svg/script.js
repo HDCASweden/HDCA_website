@@ -119,8 +119,9 @@ const showGenes = (gene) => {
   // We need the gene's index to later look for it in mi (the matrix index array)
   const genePosition = genesList.indexOf(gene);
 
-  // We want to find a value and give it a color for every area of the svg image
-  imageAreas.forEach((item) => {
+  // We want to find a value for every area of the svg image
+  // All values together will define the color scale for the visualization
+  const geneValues = imageAreas.map((item) => {
     // barcodes holds a list of all areas that is equivalent to a list of all columns in the matrix.
     // We need the areas position to identify the right part of mi
     const areaPosition = barcodes.indexOf(item);
@@ -138,14 +139,17 @@ const showGenes = (gene) => {
         value = mx[i];
       }
     }
+    return value;
+  });
 
-    // Reach for the HTML Element of the current area and fill it with a calculated value
-    // The value is based on a sample of the values for all genes and areas.
+  // Reach for the HTML Element of each area and fill it with a calculated value
+  imageAreas.forEach((item, index) => {
     document
       .getElementById(item)
-      .setAttribute("fill", getSequentialColor(value, mx));
+      .setAttribute("fill", getSequentialColor(geneValues[index], geneValues));
   });
-  generateSeqLegend(Math.min(...mx), Math.max(...mx));
+
+  generateSeqLegend(Math.min(...geneValues), Math.max(...geneValues));
 };
 
 // Function to visualize a filter by adding color to the svg
