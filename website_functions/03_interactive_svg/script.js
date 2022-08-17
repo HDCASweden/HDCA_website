@@ -160,6 +160,21 @@ const getView = (boxId) => {
 };
 
 const switchType = (type) => {
+  // Clear the filter input field
+  document.getElementById("filterDropdown").value = "";
+
+  // Remove colors from the heart image
+  metadata.forEach((areaArray, index) => {
+    if (index == 0) {
+      return;
+    }
+    const area = document.getElementById(areaArray[0]);
+    area && area.setAttribute("fill", "none");
+  });
+
+  // Remove legend
+  document.getElementById("legendWrapper").innerHTML = "";
+
   if (type === "metadata") {
     createOptions(metadata[0]);
   } else {
