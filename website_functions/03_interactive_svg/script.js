@@ -49,9 +49,9 @@ const generateSeqLegend = (min, max) => {
   legend.innerHTML = `
     <div class="seq-legend-colors"></div>
     <div class="seq-legend-labels">
-      <p>${max}</p>
-      <p>${(min + max) / 2}</p>
-      <p>${min}</p>
+      <p>${max.toFixed(2)}</p>
+      <p>${((min + max) / 2).toFixed(2)}</p>
+      <p>${min.toFixed(2)}</p>
     </div>
   `;
 };
