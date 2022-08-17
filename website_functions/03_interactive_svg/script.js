@@ -1,5 +1,19 @@
+// Information from the csv file
 let metadata = [];
+
+// A list of all genes present in the hdf5 file
 let genesList = [];
+
+// The three arrays defining the sparse matrix in the hdf5 file
+let mx = [];
+let mi = [];
+let mp = [];
+
+// The row names of the sparse matrix
+let barcodes = [];
+
+// All areas of the svg image
+let imageAreas = [];
 
 const createOptions = (optionArray) => {
   const list = document.getElementById("filter-list");
@@ -99,10 +113,39 @@ const showMetadata = (columnName) => {
   }
 };
 
+// Function to add color to the svg based on a chosen gene.
+// gene: string
 const showGenes = (gene) => {
-  // This will later create some visualization for genes.
-  // For now, just do some test stuff.
-  console.log("showing gene ", gene);
+  // We need the gene's index to later look for it in mi (the matrix index array)
+  const genePosition = genesList.indexOf(gene);
+
+  // We want to find a value and give it a color for every area of the svg image
+  imageAreas.forEach((item) => {
+    // barcodes holds a list of all areas that is equivalent to a list of all columns in the matrix.
+    // We need the areas position to identify the right part of mi
+    const areaPosition = barcodes.indexOf(item);
+    let areaInfo = {};
+    areaInfo.name = item;
+    areaInfo.start = mp[areaPosition];
+    areaInfo.end = mp[areaPosition + 1] - 1;
+
+    // If the area's column in the matrix does not hold a value for the gene's position, its value will be 0
+    let value = 0.0;
+
+    // Check if the area's column holds a value for the gene
+    for (let i = areaInfo.start; i <= areaInfo.end; i++) {
+      if (mi[i] === genePosition) {
+        value = mx[i];
+      }
+    }
+
+    // Reach for the HTML Element of the current area and fill it with a calculated value
+    // The value is based on a sample of the values for all genes and areas.
+    document
+      .getElementById(item)
+      .setAttribute("fill", getSequentialColor(value, mx));
+  });
+  generateSeqLegend(Math.min(...mx), Math.max(...mx));
 };
 
 // Function to visualize a filter by adding color to the svg
@@ -200,11 +243,15 @@ const loadData = async () => {
   console.log(f.get("matrix").keys);
   // will return ["barcodes", "data", "features", "indices", "indptr", "shape"]
 
-  // create variables containing the CCS notation arrays of the matrix
+  // Get column names
+  const rawBarcodes = f.get("matrix/barcodes").value;
+  barcodes = rawBarcodes.map((str) => str.replace(/[^a-zA-Z0-9 _]/g, ""));
+
+  // populate variables containing the CCS notation arrays of the matrix
   // x are the values, i the indices, p the indexpointer
-  const mx = f.get("matrix/data").value;
-  const mi = f.get("matrix/indices").value;
-  const mp = f.get("matrix/indptr").value;
+  mx = f.get("matrix/data").value;
+  mi = f.get("matrix/indices").value;
+  mp = f.get("matrix/indptr").value;
 
   console.log("mx", mx);
   console.log("mi", mi);
@@ -226,6 +273,11 @@ const loadData = async () => {
       complete: (results) => {
         console.log(results);
         metadata = results.data;
+        metadata.forEach((areaArray, index) => {
+          if (index !== 0 && areaArray[0][0] !== "_" && areaArray[0] !== "") {
+            imageAreas.push(areaArray[0]);
+          }
+        });
         // Check the current value of the filter type dropdown to create right set of options
         const filterType = document.getElementById("selectType").value;
         switchType(filterType);
