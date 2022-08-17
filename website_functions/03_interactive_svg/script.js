@@ -25,6 +25,19 @@ const createOptions = (optionArray) => {
   });
 };
 
+const showTooltip = (evt, text) => {
+  let tooltip = document.getElementById("tooltip");
+  tooltip.innerHTML = text;
+  tooltip.style.display = "block";
+  tooltip.style.left = evt.pageX + 10 + 'px';
+  tooltip.style.top = evt.pageY + 10 + 'px';
+}
+
+const hideTooltip = () => {
+  var tooltip = document.getElementById("tooltip");
+  tooltip.style.display = "none";
+}
+
 // Function to generate the right legend for the visualization
 // depending on what column is selected for visualisation
 const generateLegend = (legendRows) => {
