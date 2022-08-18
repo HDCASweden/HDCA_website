@@ -14,8 +14,9 @@ let barcodes = [];
 
 // All areas of the svg image
 let imageAreas = [];
-// All genes values
+// All genes values with area name and value
 let geneValues = [];
+let dataType = "";
 
 const createOptions = (optionArray) => {
   const list = document.getElementById("filter-list");
@@ -29,7 +30,22 @@ const createOptions = (optionArray) => {
 
 const showTooltip = (evt, id) => {
   let tooltip = document.getElementById("tooltip");
-  tooltip.innerHTML = geneValues.length > 0 ? id + " <br /> " + geneValues.find(e => e.name === id).value : id;
+  if (dataType == "genes"){
+    tooltip.innerHTML = geneValues.length > 0 ? id + " <br /> " + geneValues.find(e => e.name === id).value : id;
+  } else {
+    const filterValue = document.getElementById('filterDropdown').value;
+    const colIndex = metadata[0].indexOf(filterValue);
+    let rowIndex = 0;
+    for (var i = 0; i < metadata.length; i++){
+      if (metadata[i][0] === id){
+        rowIndex= i; 
+      }
+    }
+    let value = metadata[rowIndex][colIndex];
+    
+    tooltip.innerHTML = id !== value ? id + " <br /> " + value : id;
+  }
+  
   tooltip.style.display = "block";
   tooltip.style.left = evt.pageX + 10 + 'px';
   tooltip.style.top = evt.pageY + 10 + 'px';
@@ -246,6 +262,7 @@ const switchType = (type) => {
   } else {
     createOptions(genesList);
   }
+  dataType = type;
 };
 
 const loadData = async () => {
