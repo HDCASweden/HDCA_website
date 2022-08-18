@@ -155,7 +155,6 @@ const showGenes = (gene) => {
       }
       result.name=areaInfo.name;
       result.value=value;
-      console.log(result)
     }
     return result;
   });
