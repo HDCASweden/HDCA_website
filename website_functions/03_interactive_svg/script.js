@@ -14,6 +14,8 @@ let barcodes = [];
 
 // All areas of the svg image
 let imageAreas = [];
+// All genes values
+let geneValues = [];
 
 const createOptions = (optionArray) => {
   const list = document.getElementById("filter-list");
@@ -25,9 +27,9 @@ const createOptions = (optionArray) => {
   });
 };
 
-const showTooltip = (evt, text) => {
+const showTooltip = (evt, id) => {
   let tooltip = document.getElementById("tooltip");
-  tooltip.innerHTML = text;
+  tooltip.innerHTML = geneValues.length > 0 ? id + " <br /> " + geneValues.find(e => e.name === id).value : id;
   tooltip.style.display = "block";
   tooltip.style.left = evt.pageX + 10 + 'px';
   tooltip.style.top = evt.pageY + 10 + 'px';
@@ -134,7 +136,7 @@ const showGenes = (gene) => {
 
   // We want to find a value for every area of the svg image
   // All values together will define the color scale for the visualization
-  const geneValues = imageAreas.map((item) => {
+  geneValues = imageAreas.map((item) => {
     // barcodes holds a list of all areas that is equivalent to a list of all columns in the matrix.
     // We need the areas position to identify the right part of mi
     const areaPosition = barcodes.indexOf(item);
@@ -145,24 +147,27 @@ const showGenes = (gene) => {
 
     // If the area's column in the matrix does not hold a value for the gene's position, its value will be 0
     let value = 0.0;
-
+    let result = {};
     // Check if the area's column holds a value for the gene
     for (let i = areaInfo.start; i <= areaInfo.end; i++) {
       if (mi[i] === genePosition) {
         value = mx[i];
       }
+      result.name=areaInfo.name;
+      result.value=value;
+      console.log(result)
     }
-    return value;
+    return result;
   });
 
   // Reach for the HTML Element of each area and fill it with a calculated value
   imageAreas.forEach((item, index) => {
     document
       .getElementById(item)
-      .setAttribute("fill", getSequentialColor(geneValues[index], geneValues));
+      .setAttribute("fill", getSequentialColor(geneValues[index].value, geneValues.map(e => e.value)));
   });
 
-  generateSeqLegend(Math.min(...geneValues), Math.max(...geneValues));
+  generateSeqLegend(Math.min(...geneValues.map(e => e.value)), Math.max(...geneValues.map(e => e.value)));
 };
 
 // Function to visualize a filter by adding color to the svg
@@ -222,6 +227,8 @@ const getView = (boxId) => {
 const switchType = (type) => {
   // Clear the filter input field
   document.getElementById("filterDropdown").value = "";
+  //Clear the genesValue object array
+  geneValues = [];
 
   // Remove colors from the heart image
   metadata.forEach((areaArray, index) => {
