@@ -229,7 +229,7 @@ const switchType = (type) => {
       return;
     }
     const area = document.getElementById(areaArray[0]);
-    area && area.setAttribute("fill", "none");
+    area && area.setAttribute("fill", "transparent");
   });
 
   // Remove legend
