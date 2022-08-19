@@ -200,15 +200,21 @@ const showGenes = (gene) => {
 // That second function takes care of the actual coloring.
 // filter: string. The value inside the filterDropdown input
 const visualize = (filter) => {
-  if (filter === "") {
-    clearVisualization();
-    return;
-  }
   // Check if we are showing genes or metadata
   const filterType = document.getElementById("selectType");
   if (filterType.value === "metadata") {
+    // Make sure the filter input is valid
+    // metadata[0] includes "", so we need to check for that separately
+    if (filter === "" || !metadata[0].includes(filter)) {
+      clearVisualization();
+      return;
+    }
     showMetadata(filter);
   } else {
+    if (!genesList.includes(filter)) {
+      clearVisualization();
+      return;
+    }
     showGenes(filter);
   }
 };
