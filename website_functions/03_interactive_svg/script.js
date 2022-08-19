@@ -251,7 +251,7 @@ const switchType = (type) => {
       return;
     }
     const area = document.getElementById(areaArray[0]);
-    area && area.setAttribute("fill", "transparent");
+    area && area.setAttribute("fill", "#FFFDFA");
   });
 
   // Remove legend
