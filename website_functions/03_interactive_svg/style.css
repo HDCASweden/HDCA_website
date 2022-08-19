@@ -8,7 +8,7 @@
 }
 
 .legend-field {
-  width: 1rem;
+  width: 2.5rem;
   height: 1rem;
   border: 1px solid black;
 }
@@ -41,13 +41,28 @@ object {
   display: flex;
 }
 
-.right {
-  padding: 0.6rem;
-  width: 25%;
+.left {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.left {
-  width: 75%;
+.svg-wrapper {
+  margin: auto 0;
+  display: flex;
+  align-items: flex-start;
+}
+
+.controls-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.controls {
+  width: fit-content;
+  margin-bottom: 1rem;
+  margin-top: 0.2rem;
 }
 
 #tooltip {
