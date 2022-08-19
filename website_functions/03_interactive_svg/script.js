@@ -30,31 +30,34 @@ const createOptions = (optionArray) => {
 
 const showTooltip = (evt, id) => {
   let tooltip = document.getElementById("tooltip");
-  if (dataType == "genes"){
-    tooltip.innerHTML = geneValues.length > 0 ? id + " <br /> " + geneValues.find(e => e.name === id).value : id;
+  if (dataType == "genes") {
+    tooltip.innerHTML =
+      geneValues.length > 0
+        ? id + " <br /> " + geneValues.find((e) => e.name === id).value
+        : id;
   } else {
-    const filterValue = document.getElementById('filterDropdown').value;
+    const filterValue = document.getElementById("filterDropdown").value;
     const colIndex = metadata[0].indexOf(filterValue);
     let rowIndex = 0;
-    for (var i = 0; i < metadata.length; i++){
-      if (metadata[i][0] === id){
-        rowIndex= i; 
+    for (var i = 0; i < metadata.length; i++) {
+      if (metadata[i][0] === id) {
+        rowIndex = i;
       }
     }
     let value = metadata[rowIndex][colIndex];
-    
+
     tooltip.innerHTML = id !== value ? id + " <br /> " + value : id;
   }
-  
+
   tooltip.style.display = "block";
-  tooltip.style.left = evt.pageX + 10 + 'px';
-  tooltip.style.top = evt.pageY + 10 + 'px';
-}
+  tooltip.style.left = evt.pageX + 10 + "px";
+  tooltip.style.top = evt.pageY + 10 + "px";
+};
 
 const hideTooltip = () => {
   var tooltip = document.getElementById("tooltip");
   tooltip.style.display = "none";
-}
+};
 
 // Function to generate the right legend for the visualization
 // depending on what column is selected for visualisation
@@ -169,27 +172,38 @@ const showGenes = (gene) => {
       if (mi[i] === genePosition) {
         value = mx[i];
       }
-      result.name=areaInfo.name;
-      result.value=value;
+      result.name = areaInfo.name;
+      result.value = value;
     }
     return result;
   });
 
   // Reach for the HTML Element of each area and fill it with a calculated value
   imageAreas.forEach((item, index) => {
-    document
-      .getElementById(item)
-      .setAttribute("fill", getSequentialColor(geneValues[index].value, geneValues.map(e => e.value)));
+    document.getElementById(item).setAttribute(
+      "fill",
+      getSequentialColor(
+        geneValues[index].value,
+        geneValues.map((e) => e.value)
+      )
+    );
   });
 
-  generateSeqLegend(Math.min(...geneValues.map(e => e.value)), Math.max(...geneValues.map(e => e.value)));
+  generateSeqLegend(
+    Math.min(...geneValues.map((e) => e.value)),
+    Math.max(...geneValues.map((e) => e.value))
+  );
 };
 
 // Function to visualize a filter by adding color to the svg
 // Acts as a forwarding function that calls another function depending on the filter type.
 // That second function takes care of the actual coloring.
-// filter: string. A metadata column name or a gene name
+// filter: string. The value inside the filterDropdown input
 const visualize = (filter) => {
+  if (filter === "") {
+    clearVisualization();
+    return;
+  }
   // Check if we are showing genes or metadata
   const filterType = document.getElementById("selectType");
   if (filterType.value === "metadata") {
@@ -239,7 +253,7 @@ const getView = (boxId) => {
   image.setAttribute("viewBox", `${boxX} ${boxY} ${boxWidth} ${boxHeight}`);
 };
 
-const switchType = (type) => {
+const clearVisualization = () => {
   // Clear the filter input field
   document.getElementById("filterDropdown").value = "";
   //Clear the genesValue object array
@@ -256,6 +270,10 @@ const switchType = (type) => {
 
   // Remove legend
   document.getElementById("legendWrapper").innerHTML = "";
+};
+
+const switchType = (type) => {
+  clearVisualization();
 
   if (type === "metadata") {
     createOptions(metadata[0]);
