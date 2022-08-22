@@ -18,47 +18,6 @@ let imageAreas = [];
 let geneValues = [];
 let dataType = "";
 
-const createOptions = (optionArray) => {
-  const list = document.getElementById("filter-list");
-  list.innerHTML = "";
-  optionArray.forEach((item) => {
-    const option = document.createElement("option");
-    option.value = item;
-    list.appendChild(option);
-  });
-};
-
-const showTooltip = (evt, id) => {
-  let tooltip = document.getElementById("tooltip");
-  if (dataType == "genes") {
-    tooltip.innerHTML =
-      geneValues.length > 0
-        ? id + " <br /> " + geneValues.find((e) => e.name === id).value
-        : id;
-  } else {
-    const filterValue = document.getElementById("filterDropdown").value;
-    const colIndex = metadata[0].indexOf(filterValue);
-    let rowIndex = 0;
-    for (var i = 0; i < metadata.length; i++) {
-      if (metadata[i][0] === id) {
-        rowIndex = i;
-      }
-    }
-    let value = metadata[rowIndex][colIndex];
-
-    tooltip.innerHTML = id !== value ? id + " <br /> " + value : id;
-  }
-
-  tooltip.style.display = "block";
-  tooltip.style.left = evt.pageX + 10 + "px";
-  tooltip.style.top = evt.pageY + 10 + "px";
-};
-
-const hideTooltip = () => {
-  var tooltip = document.getElementById("tooltip");
-  tooltip.style.display = "none";
-};
-
 // Function to generate the right legend for the visualization
 // depending on what column is selected for visualisation
 const generateLegend = (legendRows) => {
@@ -195,30 +154,6 @@ const showGenes = (gene) => {
   );
 };
 
-// Function to visualize a filter by adding color to the svg
-// Acts as a forwarding function that calls another function depending on the filter type.
-// That second function takes care of the actual coloring.
-// filter: string. The value inside the filterDropdown input
-const visualize = (filter) => {
-  // Check if we are showing genes or metadata
-  const filterType = document.getElementById("selectType");
-  if (filterType.value === "metadata") {
-    // Make sure the filter input is valid
-    // metadata[0] includes "", so we need to check for that separately
-    if (filter === "" || !metadata[0].includes(filter)) {
-      clearVisualization();
-      return;
-    }
-    showMetadata(filter);
-  } else {
-    if (!genesList.includes(filter)) {
-      clearVisualization();
-      return;
-    }
-    showGenes(filter);
-  }
-};
-
 // Function to get a array of only numeric values
 // The data is the metadata provided in the project
 // The function applies to inflammation_level column values
@@ -248,6 +183,7 @@ const getSequentialColor = (value, sampleArray) => {
   return color;
 };
 
+// Changes the field of view(fov) depending on the fov dropbox
 const getView = (boxId) => {
   const box = document.getElementById(boxId);
   const boxX = box.getAttribute("x");
@@ -259,6 +195,31 @@ const getView = (boxId) => {
   image.setAttribute("viewBox", `${boxX} ${boxY} ${boxWidth} ${boxHeight}`);
 };
 
+// Function to visualize a filter by adding color to the svg
+// Acts as a forwarding function that calls another function depending on the filter type.
+// That second function takes care of the actual coloring.
+// filter: string. The value inside the filterDropdown input
+const visualize = (filter) => {
+  // Check if we are showing genes or metadata
+  const filterType = document.getElementById("selectType");
+  if (filterType.value === "metadata") {
+    // Make sure the filter input is valid
+    // metadata[0] includes "", so we need to check for that separately
+    if (filter === "" || !metadata[0].includes(filter)) {
+      clearVisualization();
+      return;
+    }
+    showMetadata(filter);
+  } else {
+    if (!genesList.includes(filter)) {
+      clearVisualization();
+      return;
+    }
+    showGenes(filter);
+  }
+};
+
+// Function to clear visualisation when user changes filter or type
 const clearVisualization = () => {
   // Clear the filter input field
   document.getElementById("filterDropdown").value = "";
@@ -278,6 +239,18 @@ const clearVisualization = () => {
   document.getElementById("legendWrapper").innerHTML = "";
 };
 
+// Create the options for metadata or genes
+const createOptions = (optionArray) => {
+  const list = document.getElementById("filter-list");
+  list.innerHTML = "";
+  optionArray.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item;
+    list.appendChild(option);
+  });
+};
+
+// Fuction to switch datatype on change event of selectType dropdown
 const switchType = (type) => {
   clearVisualization();
 
@@ -289,6 +262,42 @@ const switchType = (type) => {
   dataType = type;
 };
 
+
+// Function to show tooltip on mouse move
+const showTooltip = (evt, id) => {
+  let tooltip = document.getElementById("tooltip");
+  if (dataType == "genes") {
+    tooltip.innerHTML =
+      geneValues.length > 0
+        ? id + " <br /> " + geneValues.find((e) => e.name === id).value
+        : id;
+  } else {
+    const filterValue = document.getElementById("filterDropdown").value;
+    const colIndex = metadata[0].indexOf(filterValue);
+    let rowIndex = 0;
+    for (var i = 0; i < metadata.length; i++) {
+      if (metadata[i][0] === id) {
+        rowIndex = i;
+      }
+    }
+    let value = metadata[rowIndex][colIndex];
+
+    tooltip.innerHTML = id !== value ? id + " <br /> " + value : id;
+  }
+
+  tooltip.style.display = "block";
+  tooltip.style.left = evt.pageX + 10 + "px";
+  tooltip.style.top = evt.pageY + 10 + "px";
+};
+
+// Function to show tooltip on mouse out event
+const hideTooltip = () => {
+  var tooltip = document.getElementById("tooltip");
+  tooltip.style.display = "none";
+};
+
+
+//Function that fetchs the data for the svg visualisation from metadata file or genes file.
 const loadData = async () => {
   // read the hdf5 file as ArrayBuffer
   const res = await fetch(
