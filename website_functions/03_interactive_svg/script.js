@@ -1,73 +1,26 @@
+// Information from the csv file
 let metadata = [];
-var list = document.getElementById('genes-list');
-var genesList = [
-  'gene_1',
-  'gene_2',
-  'gene_3',
-  'gene_4',
-  'gene_5',
-  'gene_6',
-];
-genesList.forEach(function(item){
-   var option = document.createElement('option');
-   option.value = item;
-   list.appendChild(option);
-});
 
-const loadData = async () => {
-  // read the hdf5 file as ArrayBuffer
-  const res = await fetch(
-    "https://export.uppmax.uu.se/snic2022-23-113/hdca_webdev/CCF/CCF_data.h5"
-  );
-  const arrayBuffer = await res.arrayBuffer();
+// A list of all genes present in the hdf5 file
+let genesList = [];
 
-  // read as hdf5 file
-  const f = new hdf5.File(arrayBuffer);
+// The three arrays defining the sparse matrix in the hdf5 file
+let mx = [];
+let mi = [];
+let mp = [];
 
-  // To check out the file structure of f, use f.keys
-  console.log(f.keys);
-  // will return ["matrix"]. This is the top level directory
+// The row names of the sparse matrix
+let barcodes = [];
 
-  // To check for deeper structure, use combination of .get and .keys
-  console.log(f.get("matrix").keys);
-  // will return ["barcodes", "data", "features", "indices", "indptr", "shape"]
-
-  // create variables containing the CCS notation arrays of the matrix
-  // x are the values, i the indices, p the indexpointer
-  const mx = f.get("matrix/data").value;
-  const mi = f.get("matrix/indices").value;
-  const mp = f.get("matrix/indptr").value;
-
-  console.log("mx", mx);
-  console.log("mi", mi);
-  console.log("mp", mp);
-
-  // check the dimensions of the matrix.
-  // will return an array with 2 values: [number_of_rows, number_of_columns]
-  const shape = f.get("matrix/shape").value;
-  console.log(shape);
-
-  Papa.parse(
-    "https://export.uppmax.uu.se/snic2022-23-113/hdca_webdev/CCF/CCF_meta.csv",
-    {
-      download: true,
-      complete: (results) => {
-        console.log(results);
-        createOptions(results.data[0]);
-        metadata = results.data;
-      },
-    }
-  );
-};
-
-const createOptions = (columnNames) => {
-  columnNames.map((name) => {
-    document.getElementById("dropdown").innerHTML += `<option>${name}</option>`;
-  });
-};
+// All areas of the svg image
+let imageAreas = [];
+// All genes values with area name and value
+let geneValues = [];
+let dataType = "";
 
 // Function to generate the right legend for the visualization
-// depending on what column is selected for visualisation
+// depending on what metadata column is selected for visualization
+// legendRows: object. Keys are all values shown in the vizualisation. Values are strings containing color hex codes
 const generateLegend = (legendRows) => {
   const legendWrapper = document.getElementById("legendWrapper");
   legendWrapper.innerHTML = `<table id="legend"></table>`;
@@ -85,19 +38,22 @@ const generateLegend = (legendRows) => {
 
 // Function to generate a legend for sequential coloring
 // based on the min and max value of the scale
+// min, max: number
 const generateSeqLegend = (min, max) => {
   const legend = document.getElementById("legendWrapper");
   legend.innerHTML = `
     <div class="seq-legend-colors"></div>
     <div class="seq-legend-labels">
-      <p>${min}</p>
-      <p>${(min + max) / 2}</p>
-      <p>${max}</p>
+      <p>${max.toFixed(2)}</p>
+      <p>${((min + max) / 2).toFixed(2)}</p>
+      <p>${min.toFixed(2)}</p>
     </div>
   `;
 };
 
-const addColor = (columnName) => {
+// Function to add color to the svg based on a chosen filter.
+// columnName: string. The chosen filter.
+const showMetadata = (columnName) => {
   // The legend object will be populated with key value pairs
   // for each unique value we find in this column.
   // The unique value from the column will become a key in the object and
@@ -152,11 +108,59 @@ const addColor = (columnName) => {
   }
 };
 
-// Function to get a array of only numeric values
+// Function to add color to the svg based on a chosen gene.
+// gene: string
+const showGenes = (gene) => {
+  // We need the gene's index to later look for it in mi (the matrix index array)
+  const genePosition = genesList.indexOf(gene);
+
+  // We want to find a value for every area of the svg image
+  // All values together will define the color scale for the visualization
+  geneValues = imageAreas.map((item) => {
+    // barcodes holds a list of all areas that is equivalent to a list of all columns in the matrix.
+    // We need the areas position to identify the right part of mi
+    const areaPosition = barcodes.indexOf(item);
+    let areaInfo = {};
+    areaInfo.name = item;
+    areaInfo.start = mp[areaPosition];
+    areaInfo.end = mp[areaPosition + 1] - 1;
+
+    // If the area's column in the matrix does not hold a value for the gene's position, its value will be 0
+    let value = 0.0;
+    let result = {};
+    // Check if the area's column holds a value for the gene
+    for (let i = areaInfo.start; i <= areaInfo.end; i++) {
+      if (mi[i] === genePosition) {
+        value = mx[i];
+      }
+      result.name = areaInfo.name;
+      result.value = value;
+    }
+    return result;
+  });
+
+  // Reach for the HTML Element of each area and fill it with a calculated value
+  imageAreas.forEach((item, index) => {
+    document.getElementById(item).setAttribute(
+      "fill",
+      getSequentialColor(
+        geneValues[index].value,
+        geneValues.map((e) => e.value)
+      )
+    );
+  });
+
+  generateSeqLegend(
+    Math.min(...geneValues.map((e) => e.value)),
+    Math.max(...geneValues.map((e) => e.value))
+  );
+};
+
+// Function to get an array of only numeric values
 // The data is the metadata provided in the project
 // The function applies to inflammation_level column values
 // data: any[]
-const getSampleArray = (data) => {
+const getSampleArray = () => {
   let sampleArray = [];
   for (var i = 1; i < metadata.length - 1; i++) {
     if (!isNaN(metadata[i][metadata[i].length - 1])) {
@@ -172,7 +176,7 @@ const getSampleArray = (data) => {
 // The max value will have the darkest color.
 // The color for the current value is picked from the colorscale accordingly.
 // value: number
-// sample: number[]
+// sampleArray: number[]
 const getSequentialColor = (value, sampleArray) => {
   const normalizedValue =
     (value - Math.min(...sampleArray)) /
@@ -181,6 +185,8 @@ const getSequentialColor = (value, sampleArray) => {
   return color;
 };
 
+// Changes the field of view(fov) depending on the fov dropdown
+// boxId: string. The id used for the fov rectangles in the svg code
 const getView = (boxId) => {
   const box = document.getElementById(boxId);
   const boxX = box.getAttribute("x");
@@ -190,6 +196,172 @@ const getView = (boxId) => {
 
   const image = document.getElementById("heart");
   image.setAttribute("viewBox", `${boxX} ${boxY} ${boxWidth} ${boxHeight}`);
+};
+
+// Function to visualize a filter by adding color to the svg
+// Acts as a forwarding function that calls another function depending on the filter type.
+// That second function takes care of the actual coloring.
+// filter: string. The value inside the filterDropdown input
+const visualize = (filter) => {
+  // Check if we are showing genes or metadata
+  const filterType = document.getElementById("selectType");
+  if (filterType.value === "metadata") {
+    // Make sure the filter input is valid
+    // metadata[0] includes "", so we need to check for that separately
+    if (filter === "" || !metadata[0].includes(filter)) {
+      clearVisualization();
+      return;
+    }
+    showMetadata(filter);
+  } else {
+    if (!genesList.includes(filter)) {
+      clearVisualization();
+      return;
+    }
+    showGenes(filter);
+  }
+};
+
+// Function to clear visualization when user changes filter or type
+const clearVisualization = () => {
+  // Clear the filter input field
+  document.getElementById("filterDropdown").value = "";
+  //Clear the genesValue object array
+  geneValues = [];
+
+  // Remove colors from the heart image
+  metadata.forEach((areaArray, index) => {
+    if (index == 0) {
+      return;
+    }
+    const area = document.getElementById(areaArray[0]);
+    area && area.setAttribute("fill", "#FFFDFA");
+  });
+
+  // Remove legend
+  document.getElementById("legendWrapper").innerHTML = "";
+};
+
+// Create the options for metadata or genes
+// optionArray: string[]
+const createOptions = (optionArray) => {
+  const list = document.getElementById("filter-list");
+  list.innerHTML = "";
+  optionArray.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item;
+    list.appendChild(option);
+  });
+};
+
+// Fuction to switch datatype on change event of selectType dropdown
+// type: string
+const switchType = (type) => {
+  clearVisualization();
+
+  if (type === "metadata") {
+    createOptions(metadata[0]);
+  } else {
+    createOptions(genesList);
+  }
+  dataType = type;
+};
+
+// Function to show tooltip on mouse move
+// evt: mousemove event
+// id: string. The id of the path within the svg that the mouse moved over
+const showTooltip = (evt, id) => {
+  let tooltip = document.getElementById("tooltip");
+  if (dataType == "genes") {
+    tooltip.innerHTML =
+      geneValues.length > 0
+        ? id + " <br /> " + geneValues.find((e) => e.name === id).value
+        : id;
+  } else {
+    const filterValue = document.getElementById("filterDropdown").value;
+    const colIndex = metadata[0].indexOf(filterValue);
+    let rowIndex = 0;
+    for (var i = 0; i < metadata.length; i++) {
+      if (metadata[i][0] === id) {
+        rowIndex = i;
+      }
+    }
+    let value = metadata[rowIndex][colIndex];
+
+    tooltip.innerHTML = id !== value ? id + " <br /> " + value : id;
+  }
+
+  tooltip.style.display = "block";
+  tooltip.style.left = evt.pageX + 10 + "px";
+  tooltip.style.top = evt.pageY + 10 + "px";
+};
+
+// Function to show tooltip on mouse out event
+const hideTooltip = () => {
+  var tooltip = document.getElementById("tooltip");
+  tooltip.style.display = "none";
+};
+
+//Function that fetches the data for the svg visualization from metadata file or genes file.
+const loadData = async () => {
+  // read the hdf5 file as ArrayBuffer
+  const res = await fetch(
+    "https://export.uppmax.uu.se/snic2022-23-113/hdca_webdev/CCF/CCF_data.h5"
+  );
+  const arrayBuffer = await res.arrayBuffer();
+
+  // read as hdf5 file
+  const f = new hdf5.File(arrayBuffer);
+
+  // To check out the file structure of f, use f.keys
+  console.log(f.keys);
+  // will return ["matrix"]. This is the top level directory
+
+  // To check for deeper structure, use combination of .get and .keys
+  console.log(f.get("matrix").keys);
+  // will return ["barcodes", "data", "features", "indices", "indptr", "shape"]
+
+  // Get column names
+  const rawBarcodes = f.get("matrix/barcodes").value;
+  barcodes = rawBarcodes.map((str) => str.replace(/[^a-zA-Z0-9 _]/g, ""));
+
+  // populate variables containing the CCS notation arrays of the matrix
+  // x are the values, i the indices, p the indexpointer
+  mx = f.get("matrix/data").value;
+  mi = f.get("matrix/indices").value;
+  mp = f.get("matrix/indptr").value;
+
+  console.log("mx", mx);
+  console.log("mi", mi);
+  console.log("mp", mp);
+
+  // Get the row names of the matrix and use as genes list
+  const allGenes = f.get("matrix/features/name").value;
+  genesList = allGenes.map((str) => str.replace(/[^a-zA-Z0-9 _]/g, ""));
+
+  // check the dimensions of the matrix.
+  // will return an array with 2 values: [number_of_rows, number_of_columns]
+  const shape = f.get("matrix/shape").value;
+  console.log(shape);
+
+  Papa.parse(
+    "https://export.uppmax.uu.se/snic2022-23-113/hdca_webdev/CCF/CCF_meta.csv",
+    {
+      download: true,
+      complete: (results) => {
+        console.log(results);
+        metadata = results.data;
+        metadata.forEach((areaArray, index) => {
+          if (index !== 0 && areaArray[0][0] !== "_" && areaArray[0] !== "") {
+            imageAreas.push(areaArray[0]);
+          }
+        });
+        // Check the current value of the filter type dropdown to create right set of options
+        const filterType = document.getElementById("selectType").value;
+        switchType(filterType);
+      },
+    }
+  );
 };
 
 window.onload = loadData();
