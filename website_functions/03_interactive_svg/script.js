@@ -19,7 +19,8 @@ let geneValues = [];
 let dataType = "";
 
 // Function to generate the right legend for the visualization
-// depending on what column is selected for visualisation
+// depending on what metadata column is selected for visualization
+// legendRows: object. Keys are all values shown in the vizualisation. Values are strings containing color hex codes
 const generateLegend = (legendRows) => {
   const legendWrapper = document.getElementById("legendWrapper");
   legendWrapper.innerHTML = `<table id="legend"></table>`;
@@ -37,6 +38,7 @@ const generateLegend = (legendRows) => {
 
 // Function to generate a legend for sequential coloring
 // based on the min and max value of the scale
+// min, max: number
 const generateSeqLegend = (min, max) => {
   const legend = document.getElementById("legendWrapper");
   legend.innerHTML = `
@@ -154,11 +156,11 @@ const showGenes = (gene) => {
   );
 };
 
-// Function to get a array of only numeric values
+// Function to get an array of only numeric values
 // The data is the metadata provided in the project
 // The function applies to inflammation_level column values
 // data: any[]
-const getSampleArray = (data) => {
+const getSampleArray = () => {
   let sampleArray = [];
   for (var i = 1; i < metadata.length - 1; i++) {
     if (!isNaN(metadata[i][metadata[i].length - 1])) {
@@ -174,7 +176,7 @@ const getSampleArray = (data) => {
 // The max value will have the darkest color.
 // The color for the current value is picked from the colorscale accordingly.
 // value: number
-// sample: number[]
+// sampleArray: number[]
 const getSequentialColor = (value, sampleArray) => {
   const normalizedValue =
     (value - Math.min(...sampleArray)) /
@@ -183,7 +185,8 @@ const getSequentialColor = (value, sampleArray) => {
   return color;
 };
 
-// Changes the field of view(fov) depending on the fov dropbox
+// Changes the field of view(fov) depending on the fov dropdown
+// boxId: string. The id used for the fov rectangles in the svg code
 const getView = (boxId) => {
   const box = document.getElementById(boxId);
   const boxX = box.getAttribute("x");
@@ -219,7 +222,7 @@ const visualize = (filter) => {
   }
 };
 
-// Function to clear visualisation when user changes filter or type
+// Function to clear visualization when user changes filter or type
 const clearVisualization = () => {
   // Clear the filter input field
   document.getElementById("filterDropdown").value = "";
@@ -240,6 +243,7 @@ const clearVisualization = () => {
 };
 
 // Create the options for metadata or genes
+// optionArray: string[]
 const createOptions = (optionArray) => {
   const list = document.getElementById("filter-list");
   list.innerHTML = "";
@@ -251,6 +255,7 @@ const createOptions = (optionArray) => {
 };
 
 // Fuction to switch datatype on change event of selectType dropdown
+// type: string
 const switchType = (type) => {
   clearVisualization();
 
@@ -262,8 +267,9 @@ const switchType = (type) => {
   dataType = type;
 };
 
-
 // Function to show tooltip on mouse move
+// evt: mousemove event
+// id: string. The id of the path within the svg that the mouse moved over
 const showTooltip = (evt, id) => {
   let tooltip = document.getElementById("tooltip");
   if (dataType == "genes") {
@@ -296,8 +302,7 @@ const hideTooltip = () => {
   tooltip.style.display = "none";
 };
 
-
-//Function that fetchs the data for the svg visualisation from metadata file or genes file.
+//Function that fetches the data for the svg visualization from metadata file or genes file.
 const loadData = async () => {
   // read the hdf5 file as ArrayBuffer
   const res = await fetch(
